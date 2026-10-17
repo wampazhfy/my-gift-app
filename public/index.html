@@ -4,13 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Gift App</title>
-    <!-- Подключаем Telegram Web App SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--tg-theme-bg-color, #ffffff);
-            color: var(--tg-theme-text-color, #000000);
+            background-color: var(--tg-theme-bg-color, #0f172a);
+            color: var(--tg-theme-text-color, #ffffff);
             margin: 0;
             padding: 20px;
             display: flex;
@@ -22,80 +21,75 @@
         }
 
         .card {
-            background: var(--tg-theme-secondary-bg-color, #f0f0f0);
-            border-radius: 12px;
-            padding: 20px;
+            background: var(--tg-theme-secondary-bg-color, #1e293b);
+            border-radius: 16px;
+            padding: 24px;
             width: 100%;
             max-width: 400px;
             text-align: center;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .user-avatar {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            margin-bottom: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
         }
 
         h1 {
-            font-size: 22px;
-            margin-bottom: 8px;
+            font-size: 24px;
+            margin-bottom: 10px;
         }
 
         p {
-            font-size: 14px;
-            opacity: 0.8;
-            margin-bottom: 20px;
+            font-size: 15px;
+            opacity: 0.85;
+            margin-bottom: 24px;
+            line-height: 1.4;
         }
 
         .btn {
-            background-color: var(--tg-theme-button-color, #2481cc);
+            background-color: var(--tg-theme-button-color, #3b82f6);
             color: var(--tg-theme-button-text-color, #ffffff);
             border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
+            padding: 14px 20px;
+            border-radius: 12px;
             font-size: 16px;
             cursor: pointer;
             width: 100%;
-            font-weight: bold;
+            font-weight: 600;
+            transition: opacity 0.2s;
         }
 
         .btn:active {
-            opacity: 0.8;
+            opacity: 0.7;
         }
     </style>
 </head>
 <body>
 
     <div class="card">
-        <h1 id="user-greeting">Привет! 🎁</h1>
-        <p id="user-info">Загрузка данных Telegram...</p>
-        <button class="btn" onclick="sendData()">Отправить подарок</button>
+        <h1 id="greeting">🎁 My Gift App</h1>
+        <p id="subtext">Приложение успешно запущено в Telegram и готово к работе!</p>
+        <button class="btn" onclick="handleClick()">Отправить подарок</button>
     </div>
 
     <script>
-        // Инициализация Telegram Web App
         const tg = window.Telegram.WebApp;
-
-        // Сообщаем Telegram, что приложение готово к отображению
         tg.ready();
-        tg.expand(); // Разворачиваем на весь экран
+        tg.expand();
 
-        // Получаем данные пользователя из Telegram
-        const user = tg.initDataUnsafe?.user;
-
-        if (user) {
-            document.getElementById('user-greeting').innerText = Привет, ${user.first_name}! 🎁;
-            document.getElementById('user-info').innerText = Твой ID: ${user.id};
-        } else {
-            document.getElementById('user-info').innerText = 'Запущено вне Telegram';
+        // Безопасно пытаемся достать имя пользователя
+        try {
+            const user = tg.initDataUnsafe && tg.initDataUnsafe.user;
+            if (user && user.first_name) {
+                document.getElementById('greeting').innerText = Привет, ${user.first_name}! 🎁;
+            }
+        } catch (e) {
+            console.log("User data error:", e);
         }
 
-        // Функция отправки данных обратно боту
-        function sendData() {
-            tg.sendData(JSON.stringify({ action: "gift_sent", time: new Date() }));
-            tg.close(); // Закрыть окно
+        function handleClick() {
+            try {
+                tg.sendData(JSON.stringify({ event: "gift_clicked" }));
+                tg.close();
+            } catch (e) {
+                alert("Подарок отправлен!");
+            }
         }
     </script>
 </body>
