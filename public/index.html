@@ -30,10 +30,12 @@
             flex-direction: column;
             height: 100vh;
             justify-content: space-between;
+            overflow: hidden;
         }
 
         .header {
             text-align: center;
+            flex-shrink: 0;
         }
 
         .level-title {
@@ -45,7 +47,7 @@
         .stats-bar {
             display: flex;
             justify-content: space-around;
-            margin: 12px 0;
+            margin: 10px 0;
             background: var(--card-bg);
             padding: 10px;
             border-radius: 12px;
@@ -56,14 +58,28 @@
             font-weight: 600;
         }
 
+        /* Контейнеры вкладок */
+        .content-container {
+            flex-grow: 1;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
         .tab-content {
             display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            flex-grow: 1;
-            overflow-y: auto;
             width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            position: absolute;
+            top: 0;
+            left: 0;
         }
 
         .tab-content.active {
@@ -72,81 +88,93 @@
 
         /* Тапалка */
         .tap-area {
-            position: relative;
             text-align: center;
-            margin: auto;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
-        .spongebob-avatar {
+        .spongebob-avatar-container {
             width: 220px;
             height: 220px;
             border-radius: 50%;
-            background: #fef08a;
+            background: #1e293b;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 110px;
-            cursor: pointer;
             box-shadow: 0 0 30px rgba(234, 179, 8, 0.4);
             transition: transform 0.05s ease;
-            margin: auto;
+            overflow: hidden;
+            border: 4px solid var(--accent-color);
         }
 
-        .spongebob-avatar:active {
+        .spongebob-avatar-container:active {
             transform: scale(0.95);
         }
 
+        .spongebob-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            pointer-events: none; /* Чтобы картинка не перехватывала клики */
+        }
+
         .floating-num {
-            position: absolute;
-            font-size: 24px;
+            position: fixed;
+            font-size: 28px;
             font-weight: bold;
             color: #4ade80;
             animation: floatUp 0.8s ease-out forwards;
             pointer-events: none;
+            z-index: 1000;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
 
         @keyframes floatUp {
-            0% { opacity: 1; transform: translateY(0); }
-            100% { opacity: 0; transform: translateY(-60px); }
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-80px) scale(1.2); }
         }
 
         .energy-container {
             width: 100%;
-            margin-top: 20px;
+            margin-top: 15px;
+            flex-shrink: 0;
         }
 
-        .energy-bar-bg {
-            width: 100%;
-            height: 12px;
-            background: #334155;
-            border-radius: 6px;
-            overflow: hidden;
-        }
-
-        .energy-bar-fill {
+        .energy-bar-bg { energy-bar-fill {
             height: 100%;
             background: #22c55e;
             width: 100%;
             transition: width 0.2s;
         }
 
-        /* Магазин и Бусты */
+        /* Магазин и бусты */
+        .shop-list {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding-bottom: 10px;
+        }
+
         .shop-card {
             background: var(--card-bg);
             border-radius: 12px;
-            padding: 12px 16px;
+            padding: 10px 14px;
             width: 100%;
-            margin-bottom: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-shrink: 0;
         }
 
         .btn {
             background: var(--btn-color);
             color: #fff;
             border: none;
-            padding: 10px 14px;
+            padding: 8px 12px;
             border-radius: 8px;
             font-weight: bold;
             cursor: pointer;
@@ -154,13 +182,17 @@
 
         .btn:disabled {
             opacity: 0.5;
-        }/* Нижнее меню */
+        }
+
+        /* Навигация */
         .nav-bar {
             display: flex;
             justify-content: space-around;
             background: var(--card-bg);
             padding: 10px 0;
             border-radius: 16px;
+            flex-shrink: 0;
+            margin-top: 10px;
         }
 
         .nav-item {
@@ -187,105 +219,103 @@
         </div>
     </div>
 
-    <!-- Вкладка 1: Тапалка -->
-    <div id="tab-tap" class="tab-content active">
-        <div class="tap-area">
-            <div class="spongebob-avatar" id="sponge-btn" onclick="tap(event)">🧽</div>
-        </div>
-        <div class="energy-container">
-            <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
-                <span>⚡ Энергия</span>
-                <span><span id="energy">1500</span> / <span id="max-energy">1500</span></span>
+    <!-- Основной блок с вкладками -->
+    <div class="content-container">
+
+        <!-- Вкладка 1: Тапалка -->
+        <div id="tab-tap" class="tab-content active">
+            <div class="tap-area" onclick="tap(event)">
+                <div class="spongebob-avatar-container">
+                    <img id="sponge-img" class="spongebob-img" src="https://i.imgur.com/8Q9Z5yW.png" alt="Губка Боб">
+                </div>
             </div>
-            <div class="energy-bar-bg">
-                <div class="energy-bar-fill" id="energy-fill"></div>
+            <div class="energy-container">
+                <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
+                    <span>⚡ Энергия</span>
+                    <span><span id="energy">1500</span> / <span id="max-energy">1500</span></span>
+                </div>
+                <div class="energy-bar-bg">
+                    <div class="energy-bar-fill" id="energy-fill"></div>
+                </div>
             </div>
         </div>
+
+        <!-- Вкладка 2: Бусты -->
+        <div id="tab-boosts" class="tab-content" style="justify-content: flex-start;">
+            <h3 style="margin: 5px 0 10px 0; font-size: 16px;">🚀 Улучшения</h3>
+            <div class="shop-list">
+                <div class="shop-card">
+                    <div>
+                        <div style="font-size: 14px; font-weight: 600;">Мультитап (+1 за клик)</div>
+                        <small style="opacity: 0.7;">Цена: <span id="multitap-cost">100</span> 🪙</small>
+                    </div>
+                    <button class="btn" onclick="buyMultitap()">Прокачать</button>
+                </div>
+                <div class="shop-card">
+                    <div>
+                        <div style="font-size: 14px; font-weight: 600;">Макс. Энергия (+500)</div>
+                        <small style="opacity: 0.7;">Цена: <span id="energy-cost">200</span> 🪙</small>
+                    </div>
+                    <button class="btn" onclick="buyEnergyLimit()">Прокачать</button>
+                </div>
+            width: 100%; <h3 style="margin: 10px 0 5px 0; font-size: 16px;">⭐ Купить Метеоры</h3>
+                <div class="shop-card"><div><span style="font-size: 13px;">1 ⭐ = 5 ☄️</span></div><button class="btn" onclick="buyMeteorsStars(1, 5)">Купить</button></div>
+                <div class="shop-card"><div><span style="font-size: 13px;">10 ⭐ = 50 ☄️</span></div><button class="btn" onclick="buyMeteorsStars(10, 50)">Купить</button></div>
+                <div class="shop-card"><div><span style="font-size: 13px;">20 ⭐ = 100 ☄️</span></div><button class="btn" onclick="buyMeteorsStars(20, 100)">Купить</button></div>
+                <div class="shop-card"><div><span style="font-size: 13px;">50 ⭐ = 250 ☄️</span></div><button class="btn" onclick="buyMeteorsStars(50, 250)">Купить</button></div>
+                <div class="shop-card"><div><span style="font-size: 13px;">100 ⭐ = 500 ☄️</span></div><button class="btn" onclick="buyMeteorsStars(100, 500)">Купить</button></div>
+            </div>
+        </div>
+
+        <!-- Вкладка 3: Кейсы -->
+        <div id="tab-cases" class="tab-content" style="justify-content: flex-start;">
+            <h3 style="margin: 5px 0 10px 0; font-size: 16px;">📦 Кейсы с подарками</h3>
+            <div class="shop-list">
+                <div class="shop-card">
+                    <div>
+                        <div style="font-size: 14px; font-weight: 600;">Бюджет (25 ☄️)</div>
+                        <small style="opacity: 0.7;">1%: 🧸 Мишка (15 ⭐)</small>
+                    </div>
+                    <button class="btn" onclick="openCase('budget', 25)">Открыть</button>
+                </div>
+                <div class="shop-card">
+                    <div>
+                        <div style="font-size: 14px; font-weight: 600;">Эконом (50 ☄️)</div>
+                        <small style="opacity: 0.7;">3%: Мишка | 0.5%: 🎂 Торт</small>
+                    </div>
+                    <button class="btn" onclick="openCase('economy', 50)">Открыть</button>
+                </div>
+                <div class="shop-card">
+                    <div>
+                        <div style="font-size: 14px; font-weight: 600;">Бизнес (100 ☄️)</div>
+                        <small style="opacity: 0.7;">2%: 🎂 Торт (50 ⭐)</small>
+                    </div>
+                    <button class="btn" onclick="openCase('business', 100)">Открыть</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Вкладка 4: Лидерборд -->
+        <div id="tab-leaderboard" class="tab-content" style="justify-content: flex-start;">
+            <h3 style="margin: 5px 0 10px 0; font-size: 16px;">🏆 Лидерборд сезона</h3>
+            <p style="font-size: 12px; text-align: center; opacity: 0.8; margin-bottom: 10px;">
+                Топ-1 игрок сезона получит секретный подарок от владельца!
+            </p>
+            <div class="shop-list">
+                <div class="shop-card">
+                    <div>1. @wampazhfy</div>
+                    <div style="font-weight: bold; color: var(--accent-color);">250,000 🪙</div>
+                </div>
+                <div class="shop-card">
+                    <div>2. Вы</div>
+                    <div style="font-weight: bold; color: var(--accent-color);"><span id="lb-coins">0</span> 🪙</div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
-    <!-- Вкладка 2: Бусты и Магазин Звезд -->
-    <div id="tab-boosts" class="tab-content" style="justify-content: flex-start;">
-        <h3 style="margin: 10px 0;">🚀 Улучшения</h3>
-        <div class="shop-card">
-            <div>
-                <div>Мультитап (+1 за клик)</div>
-                <small>Цена: <span id="multitap-cost">100</span> 🪙</small>
-            </div>
-            <button class="btn" onclick="buyMultitap()">Прокачать</button>
-        </div>
-        <div class="shop-card">
-            <div>
-                <div>Макс. Энергия (+500)</div>
-                <small>Цена: <span id="energy-cost">200</span> 🪙</small>
-            </div>
-            <button class="btn" onclick="buyEnergyLimit()">Прокачать</button>
-        </div>
-
-        <h3 style="margin: 15px 0 10px 0;">⭐ Купить Метеоры</h3>
-        <div class="shop-card">
-            <div><div>1 ⭐ = 5 ☄️</div></div>
-            <button class="btn" onclick="buyMeteorsStars(1, 5)">Купить</button>
-        </div>
-        <div class="shop-card">
-            <div><div>10 ⭐ = 50 ☄️</div></div>
-            <button class="btn" onclick="buyMeteorsStars(10, 50)">Купить</button>
-        </div>
-        <div class="shop-card">
-            <div><div>20 ⭐ = 100 ☄️</div></div>
-            <button class="btn" onclick="buyMeteorsStars(20, 100)">Купить</button>
-        </div>
-        <div class="shop-card">
-            <div><div>50 ⭐ = 250 ☄️</div></div>
-            <button class="btn" onclick="buyMeteorsStars(50, 250)">Купить</button>
-        </div>
-        <div class="shop-card">
-            <div><div>100 ⭐ = 500 ☄️</div></div>
-            <button class="btn" onclick="buyMeteorsStars(100, 500)">Купить</button>
-        </div>
-    </div>
-
-    <!-- Вкладка 3: Кейсы -->
-    <div id="tab-cases" class="tab-content" style="justify-content: flex-start;">
-        <h3 style="margin: 10px 0;">📦 Кейсы с подарками</h3>
-        <div class="shop-card">
-            <div>
-                <div>Бюджет (25 ☄️)</div>
-                <small>Шанс 1%: 🧸 Мишка (15 ⭐)</small>
-            </div>
-            <button class="btn" onclick="openCase('budget', 25)">Открыть</button>
-        </div>
-        <div class="shop-card">
-            <div>
-                <div>Эконом (50 ☄️)</div>
-                <small>3%: 🧸 Мишка | 0.5%: 🎂 Торт (50 ⭐)</small> </div>
-            <button class="btn" onclick="openCase('economy', 50)">Открыть</button>
-        </div>
-        <div class="shop-card">
-            <div>
-                <div>Бизнес (100 ☄️)</div>
-                <small>Шанс 2%: 🎂 Торт (50 ⭐)</small>
-            </div>
-            <button class="btn" onclick="openCase('business', 100)">Открыть</button>
-        </div>
-    </div>
-
-    <!-- Вкладка 4: Лидерборд -->
-    <div id="tab-leaderboard" class="tab-content">
-        <h3>🏆 Лидерборд сезона</h3>
-        <p style="font-size: 13px; text-align: center; opacity: 0.8; padding: 0 10px;">
-            Топ-1 игрок сезона получит секретный подарок от владельца!
-        </p>
-        <div class="shop-card">
-            <div>1. @wampazhfy</div>
-            <div>250,000 🪙</div>
-        </div>
-        <div class="shop-card">
-            <div>2. Вы</div>
-            <div><span id="lb-coins">0</span> 🪙</div>
-        </div>
-    </div>
-
-    <!-- Навигация -->
+    <!-- Нижняя навигация -->
     <div class="nav-bar">
         <div class="nav-item active" onclick="switchTab('tap', this)">🧽<br>Тапалка</div>
         <div class="nav-item" onclick="switchTab('boosts', this)">🚀<br>Бусты</div>
@@ -306,18 +336,17 @@
         let maxEnergy = 1500;
         let multitapCost = 100;
         let energyCost = 200;
-
-        const levels = [
-            { limit: 0, name: "1 Уровень: Бомж", avatar: "🧽" },
-            { limit: 1500, name: "2 Уровень: Продвинутый", avatar: "🧽👔" },
-            { limit: 5000, name: "3 Уровень: Гражданский", avatar: "🧽🕶️" },
-            { limit: 10000, name: "4 Уровень: Темщик", avatar: "🧽💼" },
-            { limit: 25000, name: "5 Уровень: Арбитражник", avatar: "🧽📈" },
-            { limit: 40000, name: "6 Уровень: НФТ Холдер", avatar: "🧽🖼️" },
-            { limit: 80000, name: "7 Уровень: Медийка", avatar: "🧽📸" },
-            { limit: 110000, name: "8 Уровень: Миллионер", avatar: "🧽💵" },
-            { limit: 160000, name: "9 Уровень: Мультимиллионер", avatar: "🧽💰" },
-            { limit: 200000, name: "10 Уровень: Миллиардер", avatar: "🧽👑" }
+            height: 12px; const levels = [
+            { limit: 0, name: "1 Уровень: Бомж" },
+            { limit: 1500, name: "2 Уровень: Продвинутый" },
+            { limit: 5000, name: "3 Уровень: Гражданский" },
+            { limit: 10000, name: "4 Уровень: Темщик" },
+            { limit: 25000, name: "5 Уровень: Арбитражник" },
+            { limit: 40000, name: "6 Уровень: НФТ Холдер" },
+            { limit: 80000, name: "7 Уровень: Медийка" },
+            { limit: 110000, name: "8 Уровень: Миллионер" },
+            { limit: 160000, name: "9 Уровень: Мультимиллионер" },
+            { limit: 200000, name: "10 Уровень: Миллиардер" }
         ];
 
         function updateUI() {
@@ -333,7 +362,6 @@
                 if (totalCoins >= l.limit) currentLevel = l;
             }
             document.getElementById('level-name').innerText = currentLevel.name;
-            document.getElementById('sponge-btn').innerText = currentLevel.avatar;
         }
 
         function tap(e) {
@@ -346,8 +374,13 @@
             const num = document.createElement('div');
             num.className = 'floating-num';
             num.innerText = +${tapPower};
-            num.style.left = ${e.clientX - 15}px;
-            num.style.top = ${e.clientY - 30}px;
+            
+            // Корректные координаты для тача и мыши
+            const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+            const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+            
+            num.style.left = ${clientX - 15}px;
+            num.style.top = ${clientY - 30}px;
             document.body.appendChild(num);
             setTimeout(() => num.remove(), 800);
 
@@ -359,7 +392,9 @@
                 energy = Math.min(maxEnergy, energy + 3);
                 updateUI();
             }
-        }, 1000);function switchTab(tabId, el) {
+        }, 1000);
+
+        function switchTab(tabId, el) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.getElementById(tab-${tabId}).classList.add('active');
@@ -392,7 +427,6 @@
         }
 
         function buyMeteorsStars(stars, meteorsAmount) {
-            // Отправляем данные боту для выставления инвойса со звездами
             tg.sendData(JSON.stringify({ action: "buy_stars", stars: stars, meteors: meteorsAmount }));
         }
 
@@ -401,7 +435,10 @@
                 alert("Недостаточно метеоров!");
                 return;
             }
-            meteors -= cost;
+            background: #334155;
+            border-radius: 6px;
+            overflow: hidden;
+        } meteors -= cost;
             const rand = Math.random() * 100;
             
             if (type === 'budget' && rand <= 1) {
