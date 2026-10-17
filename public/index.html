@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
     <title>SpongeBob Tap</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
@@ -18,6 +18,9 @@
             box-sizing: border-box;
             user-select: none;
             -webkit-user-select: none;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent !important; /* Убирает синий квадрат на телефоне */
+            outline: none !important;
         }
 
         body {
@@ -29,7 +32,12 @@
             display: flex;
             flex-direction: column;
             height: 100vh;
-            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        button:focus, button:active, div:focus, div:active {
+            outline: none !important;
+            -webkit-tap-highlight-color: transparent !important;
         }
 
         .header {
@@ -77,7 +85,6 @@
             display: flex;
         }
 
-        /* Тапалка Губка Боб */
         .tap-area {
             text-align: center;
             cursor: pointer;
@@ -88,8 +95,8 @@
         }
 
         .spongebob-avatar {
-            width: 190px;
-            height: 190px;
+            width: 200px;
+            height: 200px;
             border-radius: 50%;
             background: #facc15;
             display: flex;
@@ -99,18 +106,17 @@
             box-shadow: 0 0 25px rgba(234, 179, 8, 0.5);
             transition: transform 0.05s ease;
             border: 4px solid #fef08a;
-            position: relative;
         }
 
         .spongebob-avatar:active {
-            transform: scale(0.93);
+            transform: scale(0.92);
         }
 
-        /* Лицо Губки Боба */
         .eyes {
             display: flex;
             gap: 15px;
             margin-bottom: 5px;
+            pointer-events: none;
         }
 
         .eye {
@@ -140,13 +146,13 @@
             background: black;
             border-radius: 50%;
         }
-
         .mouth {
             width: 60px;
             height: 25px;
             border-bottom: 4px solid #000;
             border-radius: 0 0 30px 30px;
             position: relative;
+            pointer-events: none;
         }
 
         .teeth {
@@ -162,20 +168,6 @@
             height: 8px;
             background: white;
             border: 1px solid black;
-        } .floating-num {
-            position: fixed;
-            font-size: 26px;
-            font-weight: bold;
-            color: #4ade80;
-            animation: floatUp 0.8s ease-out forwards;
-            pointer-events: none;
-            z-index: 1000;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
-        }
-
-        @keyframes floatUp {
-            0% { opacity: 1; transform: translateY(0); }
-            100% { opacity: 0; transform: translateY(-70px); }
         }
 
         .energy-container {
@@ -226,7 +218,6 @@
             cursor: pointer;
         }
 
-        /* Навигация горизонтальная */
         .nav-bar {
             display: flex;
             flex-direction: row;
@@ -246,6 +237,7 @@
             cursor: pointer;
             text-align: center;
             flex: 1;
+            padding: 4px 0;
         }
 
         .nav-item.active {
@@ -256,7 +248,6 @@
 </head>
 <body>
 
-    <!-- Шапка -->
     <div class="header">
         <div class="level-title" id="level-name">1 Уровень: Бомж</div>
         <div class="stats-bar">
@@ -265,13 +256,12 @@
         </div>
     </div>
 
-    <!-- Вкладки -->
     <div class="content-container">
 
         <!-- Вкладка 1: Тапалка -->
         <div id="tab-tap" class="tab-content active">
-            <div class="tap-area" onclick="tap(event)">
-                <div class="spongebob-avatar">
+            <div class="tap-area">
+                <div class="spongebob-avatar" id="sponge-target">
                     <div class="eyes">
                         <div class="eye"><div class="pupil"><div class="pupil-inner"></div></div></div>
                         <div class="eye"><div class="pupil"><div class="pupil-inner"></div></div></div>
@@ -293,7 +283,8 @@
                     <div class="energy-bar-fill" id="energy-fill"></div>
                 </div>
             </div>
-        </div> <!-- Вкладка 2: Бусты -->
+        </div>
+        <!-- Вкладка 2: Бусты -->
         <div id="tab-boosts" class="tab-content" style="justify-content: flex-start;">
             <h3 style="margin: 5px 0; font-size: 15px;">🚀 Улучшения</h3>
             <div class="shop-list">
@@ -358,7 +349,8 @@
             <div class="shop-list">
                 <div class="shop-card">
                     <div>1. @wampazhfy</div>
-                    <div style="font-weight: bold; color: var(--accent-color);">250,000 🪙</div> </div>
+                    <div style="font-weight: bold; color: var(--accent-color);">250,000 🪙</div>
+                    </div>
                 <div class="shop-card">
                     <div>2. Вы</div>
                     <div style="font-weight: bold; color: var(--accent-color);"><span id="lb-coins">0</span> 🪙</div>
@@ -368,7 +360,6 @@
 
     </div>
 
-    <!-- Нижняя горизонтальная панель -->
     <div class="nav-bar">
         <div class="nav-item active" onclick="switchTab('tap', this)">🧽<br>Тапалка</div>
         <div class="nav-item" onclick="switchTab('boosts', this)">🚀<br>Бусты</div>
@@ -418,27 +409,26 @@
             document.getElementById('level-name').innerText = currentLevel.name;
         }
 
-        function tap(e) {
+        function doTap() {
             if (energy < tapPower) return;
 
             coins += tapPower;
             totalCoins += tapPower;
             energy -= tapPower;
 
-            const num = document.createElement('div');
-            num.className = 'floating-num';
-            num.innerText = +${tapPower};
-            
-            const clientX = e.clientX  (e.touches && e.touches[0].clientX)  (window.innerWidth / 2);
-            const clientY = e.clientY  (e.touches && e.touches[0].clientY)  (window.innerHeight / 2);
-            
-            num.style.left = ${clientX - 15}px;
-            num.style.top = ${clientY - 30}px;
-            document.body.appendChild(num);
-            setTimeout(() => num.remove(), 800);
-
             updateUI();
         }
+
+        const target = document.getElementById('sponge-target');
+        
+        target.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            doTap();
+        }, { passive: false });
+
+        target.addEventListener('click', function(e) {
+            doTap();
+        });
 
         setInterval(() => {
             if (energy < maxEnergy) {
@@ -450,13 +440,18 @@
         function switchTab(tabId, el) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById(tab-${tabId}).classList.add('active');
+            
+            const activeTab = document.getElementById(tab-${tabId});
+            if (activeTab) {
+                activeTab.classList.add('active');
+            }
             el.classList.add('active');
         }
 
         function buyMultitap() {
             if (coins >= multitapCost) {
-                coins -= multitapCost; tapPower += 1;
+                coins -= multitapCost;
+                tapPower += 1;
                 multitapCost *= 2;
                 document.getElementById('multitap-cost').innerText = multitapCost;
                 updateUI();
@@ -464,7 +459,6 @@
                 alert("Недостаточно монет!");
             }
         }
-
         function buyEnergyLimit() {
             if (coins >= energyCost) {
                 coins -= energyCost;
