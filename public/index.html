@@ -25,12 +25,11 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
-            padding: 16px;
+            padding: 12px;
             display: flex;
             flex-direction: column;
             height: 100vh;
-            justify-content: space-between;
-            overflow: hidden;
+            box-sizing: border-box;
         }
 
         .header {
@@ -39,7 +38,7 @@
         }
 
         .level-title {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: bold;
             color: var(--accent-color);
         }
@@ -47,9 +46,9 @@
         .stats-bar {
             display: flex;
             justify-content: space-around;
-            margin: 10px 0;
+            margin: 8px 0;
             background: var(--card-bg);
-            padding: 10px;
+            padding: 8px;
             border-radius: 12px;
         }
 
@@ -58,15 +57,10 @@
             font-weight: 600;
         }
 
-        /* Контейнеры вкладок */
         .content-container {
-            flex-grow: 1;
+            flex: 1;
             position: relative;
             overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
         }
 
         .tab-content {
@@ -77,86 +71,139 @@
             width: 100%;
             height: 100%;
             overflow-y: auto;
-            position: absolute;
-            top: 0;
-            left: 0;
         }
 
         .tab-content.active {
             display: flex;
         }
 
-        /* Тапалка */
+        /* Тапалка Губка Боб */
         .tap-area {
             text-align: center;
             cursor: pointer;
             display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: auto;
+        }
+
+        .spongebob-avatar {
+            width: 190px;
+            height: 190px;
+            border-radius: 50%;
+            background: #facc15;
+            display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            box-shadow: 0 0 25px rgba(234, 179, 8, 0.5);
+            transition: transform 0.05s ease;
+            border: 4px solid #fef08a;
+            position: relative;
         }
 
-        .spongebob-avatar-container {
-            width: 220px;
-            height: 220px;
+        .spongebob-avatar:active {
+            transform: scale(0.93);
+        }
+
+        /* Лицо Губки Боба */
+        .eyes {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 5px;
+        }
+
+        .eye {
+            width: 38px;
+            height: 38px;
+            background: white;
             border-radius: 50%;
-            background: #1e293b;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 0 30px rgba(234, 179, 8, 0.4);
-            transition: transform 0.05s ease;
-            overflow: hidden;
-            border: 4px solid var(--accent-color);
+            border: 2px solid #000;
         }
 
-        .spongebob-avatar-container:active {
-            transform: scale(0.95);
+        .pupil {
+            width: 16px;
+            height: 16px;
+            background: #0284c7;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .spongebob-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            pointer-events: none; /* Чтобы картинка не перехватывала клики */
+        .pupil-inner {
+            width: 8px;
+            height: 8px;
+            background: black;
+            border-radius: 50%;
         }
 
-        .floating-num {
+        .mouth {
+            width: 60px;
+            height: 25px;
+            border-bottom: 4px solid #000;
+            border-radius: 0 0 30px 30px;
+            position: relative;
+        }
+
+        .teeth {
+            position: absolute;
+            bottom: -8px;
+            left: 18px;
+            display: flex;
+            gap: 4px;
+        }
+
+        .tooth {
+            width: 8px;
+            height: 8px;
+            background: white;
+            border: 1px solid black;
+        } .floating-num {
             position: fixed;
-            font-size: 28px;
+            font-size: 26px;
             font-weight: bold;
             color: #4ade80;
             animation: floatUp 0.8s ease-out forwards;
             pointer-events: none;
             z-index: 1000;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
         }
 
         @keyframes floatUp {
-            0% { opacity: 1; transform: translateY(0) scale(1); }
-            100% { opacity: 0; transform: translateY(-80px) scale(1.2); }
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-70px); }
         }
 
         .energy-container {
             width: 100%;
-            margin-top: 15px;
+            margin-top: 10px;
             flex-shrink: 0;
         }
 
-        .energy-bar-bg { energy-bar-fill {
+        .energy-bar-bg {
+            width: 100%;
+            height: 10px;
+            background: #334155;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .energy-bar-fill {
             height: 100%;
             background: #22c55e;
             width: 100%;
             transition: width 0.2s;
         }
 
-        /* Магазин и бусты */
         .shop-list {
             width: 100%;
             display: flex;
             flex-direction: column;
             gap: 8px;
-            padding-bottom: 10px;
         }
 
         .shop-card {
@@ -167,7 +214,6 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-shrink: 0;
         }
 
         .btn {
@@ -180,19 +226,18 @@
             cursor: pointer;
         }
 
-        .btn:disabled {
-            opacity: 0.5;
-        }
-
-        /* Навигация */
+        /* Навигация горизонтальная */
         .nav-bar {
             display: flex;
+            flex-direction: row;
             justify-content: space-around;
+            align-items: center;
             background: var(--card-bg);
             padding: 10px 0;
             border-radius: 16px;
             flex-shrink: 0;
-            margin-top: 10px;
+            margin-top: 8px;
+            width: 100%;
         }
 
         .nav-item {
@@ -200,6 +245,7 @@
             font-size: 12px;
             cursor: pointer;
             text-align: center;
+            flex: 1;
         }
 
         .nav-item.active {
@@ -219,14 +265,23 @@
         </div>
     </div>
 
-    <!-- Основной блок с вкладками -->
+    <!-- Вкладки -->
     <div class="content-container">
 
         <!-- Вкладка 1: Тапалка -->
         <div id="tab-tap" class="tab-content active">
             <div class="tap-area" onclick="tap(event)">
-                <div class="spongebob-avatar-container">
-                    <img id="sponge-img" class="spongebob-img" src="https://i.imgur.com/8Q9Z5yW.png" alt="Губка Боб">
+                <div class="spongebob-avatar">
+                    <div class="eyes">
+                        <div class="eye"><div class="pupil"><div class="pupil-inner"></div></div></div>
+                        <div class="eye"><div class="pupil"><div class="pupil-inner"></div></div></div>
+                    </div>
+                    <div class="mouth">
+                        <div class="teeth">
+                            <div class="tooth"></div>
+                            <div class="tooth"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="energy-container">
@@ -238,56 +293,55 @@
                     <div class="energy-bar-fill" id="energy-fill"></div>
                 </div>
             </div>
-        </div>
-
-        <!-- Вкладка 2: Бусты -->
+        </div> <!-- Вкладка 2: Бусты -->
         <div id="tab-boosts" class="tab-content" style="justify-content: flex-start;">
-            <h3 style="margin: 5px 0 10px 0; font-size: 16px;">🚀 Улучшения</h3>
+            <h3 style="margin: 5px 0; font-size: 15px;">🚀 Улучшения</h3>
             <div class="shop-list">
                 <div class="shop-card">
                     <div>
-                        <div style="font-size: 14px; font-weight: 600;">Мультитап (+1 за клик)</div>
-                        <small style="opacity: 0.7;">Цена: <span id="multitap-cost">100</span> 🪙</small>
+                        <div style="font-size: 13px; font-weight: 600;">Мультитап (+1)</div>
+                        <small style="opacity: 0.7;"><span id="multitap-cost">100</span> 🪙</small>
                     </div>
-                    <button class="btn" onclick="buyMultitap()">Прокачать</button>
+                    <button class="btn" onclick="buyMultitap()">Купить</button>
                 </div>
                 <div class="shop-card">
                     <div>
-                        <div style="font-size: 14px; font-weight: 600;">Макс. Энергия (+500)</div>
-                        <small style="opacity: 0.7;">Цена: <span id="energy-cost">200</span> 🪙</small>
+                        <div style="font-size: 13px; font-weight: 600;">Макс. Энергия (+500)</div>
+                        <small style="opacity: 0.7;"><span id="energy-cost">200</span> 🪙</small>
                     </div>
-                    <button class="btn" onclick="buyEnergyLimit()">Прокачать</button>
+                    <button class="btn" onclick="buyEnergyLimit()">Купить</button>
                 </div>
-            width: 100%; <h3 style="margin: 10px 0 5px 0; font-size: 16px;">⭐ Купить Метеоры</h3>
-                <div class="shop-card"><div><span style="font-size: 13px;">1 ⭐ = 5 ☄️</span></div><button class="btn" onclick="buyMeteorsStars(1, 5)">Купить</button></div>
-                <div class="shop-card"><div><span style="font-size: 13px;">10 ⭐ = 50 ☄️</span></div><button class="btn" onclick="buyMeteorsStars(10, 50)">Купить</button></div>
-                <div class="shop-card"><div><span style="font-size: 13px;">20 ⭐ = 100 ☄️</span></div><button class="btn" onclick="buyMeteorsStars(20, 100)">Купить</button></div>
-                <div class="shop-card"><div><span style="font-size: 13px;">50 ⭐ = 250 ☄️</span></div><button class="btn" onclick="buyMeteorsStars(50, 250)">Купить</button></div>
-                <div class="shop-card"><div><span style="font-size: 13px;">100 ⭐ = 500 ☄️</span></div><button class="btn" onclick="buyMeteorsStars(100, 500)">Купить</button></div>
+
+                <h3 style="margin: 10px 0 5px 0; font-size: 15px;">⭐ Метеоры за Stars</h3>
+                <div class="shop-card"><div>1 ⭐ = 5 ☄️</div><button class="btn" onclick="buyMeteorsStars(1, 5)">Купить</button></div>
+                <div class="shop-card"><div>10 ⭐ = 50 ☄️</div><button class="btn" onclick="buyMeteorsStars(10, 50)">Купить</button></div>
+                <div class="shop-card"><div>20 ⭐ = 100 ☄️</div><button class="btn" onclick="buyMeteorsStars(20, 100)">Купить</button></div>
+                <div class="shop-card"><div>50 ⭐ = 250 ☄️</div><button class="btn" onclick="buyMeteorsStars(50, 250)">Купить</button></div>
+                <div class="shop-card"><div>100 ⭐ = 500 ☄️</div><button class="btn" onclick="buyMeteorsStars(100, 500)">Купить</button></div>
             </div>
         </div>
 
         <!-- Вкладка 3: Кейсы -->
         <div id="tab-cases" class="tab-content" style="justify-content: flex-start;">
-            <h3 style="margin: 5px 0 10px 0; font-size: 16px;">📦 Кейсы с подарками</h3>
+            <h3 style="margin: 5px 0; font-size: 15px;">📦 Кейсы с подарками</h3>
             <div class="shop-list">
                 <div class="shop-card">
                     <div>
-                        <div style="font-size: 14px; font-weight: 600;">Бюджет (25 ☄️)</div>
+                        <div style="font-size: 13px; font-weight: 600;">Бюджет (25 ☄️)</div>
                         <small style="opacity: 0.7;">1%: 🧸 Мишка (15 ⭐)</small>
                     </div>
                     <button class="btn" onclick="openCase('budget', 25)">Открыть</button>
                 </div>
                 <div class="shop-card">
                     <div>
-                        <div style="font-size: 14px; font-weight: 600;">Эконом (50 ☄️)</div>
-                        <small style="opacity: 0.7;">3%: Мишка | 0.5%: 🎂 Торт</small>
+                        <div style="font-size: 13px; font-weight: 600;">Эконом (50 ☄️)</div>
+                        <small style="opacity: 0.7;">3%: Мишка | 0.5%: Торт</small>
                     </div>
                     <button class="btn" onclick="openCase('economy', 50)">Открыть</button>
                 </div>
                 <div class="shop-card">
                     <div>
-                        <div style="font-size: 14px; font-weight: 600;">Бизнес (100 ☄️)</div>
+                        <div style="font-size: 13px; font-weight: 600;">Бизнес (100 ☄️)</div>
                         <small style="opacity: 0.7;">2%: 🎂 Торт (50 ⭐)</small>
                     </div>
                     <button class="btn" onclick="openCase('business', 100)">Открыть</button>
@@ -295,17 +349,16 @@
             </div>
         </div>
 
-        <!-- Вкладка 4: Лидерборд -->
+        <!-- Вкладка 4: Топ -->
         <div id="tab-leaderboard" class="tab-content" style="justify-content: flex-start;">
-            <h3 style="margin: 5px 0 10px 0; font-size: 16px;">🏆 Лидерборд сезона</h3>
-            <p style="font-size: 12px; text-align: center; opacity: 0.8; margin-bottom: 10px;">
+            <h3 style="margin: 5px 0; font-size: 15px;">🏆 Лидерборд сезона</h3>
+            <p style="font-size: 11px; text-align: center; opacity: 0.8; margin-bottom: 8px;">
                 Топ-1 игрок сезона получит секретный подарок от владельца!
             </p>
             <div class="shop-list">
                 <div class="shop-card">
                     <div>1. @wampazhfy</div>
-                    <div style="font-weight: bold; color: var(--accent-color);">250,000 🪙</div>
-                </div>
+                    <div style="font-weight: bold; color: var(--accent-color);">250,000 🪙</div> </div>
                 <div class="shop-card">
                     <div>2. Вы</div>
                     <div style="font-weight: bold; color: var(--accent-color);"><span id="lb-coins">0</span> 🪙</div>
@@ -315,7 +368,7 @@
 
     </div>
 
-    <!-- Нижняя навигация -->
+    <!-- Нижняя горизонтальная панель -->
     <div class="nav-bar">
         <div class="nav-item active" onclick="switchTab('tap', this)">🧽<br>Тапалка</div>
         <div class="nav-item" onclick="switchTab('boosts', this)">🚀<br>Бусты</div>
@@ -336,7 +389,8 @@
         let maxEnergy = 1500;
         let multitapCost = 100;
         let energyCost = 200;
-            height: 12px; const levels = [
+
+        const levels = [
             { limit: 0, name: "1 Уровень: Бомж" },
             { limit: 1500, name: "2 Уровень: Продвинутый" },
             { limit: 5000, name: "3 Уровень: Гражданский" },
@@ -375,9 +429,8 @@
             num.className = 'floating-num';
             num.innerText = +${tapPower};
             
-            // Корректные координаты для тача и мыши
-            const clientX = e.clientX || (e.touches && e.touches[0].clientX);
-            const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+            const clientX = e.clientX  (e.touches && e.touches[0].clientX)  (window.innerWidth / 2);
+            const clientY = e.clientY  (e.touches && e.touches[0].clientY)  (window.innerHeight / 2);
             
             num.style.left = ${clientX - 15}px;
             num.style.top = ${clientY - 30}px;
@@ -403,8 +456,7 @@
 
         function buyMultitap() {
             if (coins >= multitapCost) {
-                coins -= multitapCost;
-                tapPower += 1;
+                coins -= multitapCost; tapPower += 1;
                 multitapCost *= 2;
                 document.getElementById('multitap-cost').innerText = multitapCost;
                 updateUI();
@@ -435,10 +487,7 @@
                 alert("Недостаточно метеоров!");
                 return;
             }
-            background: #334155;
-            border-radius: 6px;
-            overflow: hidden;
-        } meteors -= cost;
+            meteors -= cost;
             const rand = Math.random() * 100;
             
             if (type === 'budget' && rand <= 1) {
