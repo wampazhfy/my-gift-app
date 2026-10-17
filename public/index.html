@@ -18,8 +18,7 @@
             box-sizing: border-box;
             user-select: none;
             -webkit-user-select: none;
-            touch-action: manipulation;
-            -webkit-tap-highlight-color: transparent !important; /* Убирает синий квадрат на телефоне */
+            -webkit-tap-highlight-color: transparent !important;
             outline: none !important;
         }
 
@@ -92,6 +91,7 @@
             align-items: center;
             justify-content: center;
             margin: auto;
+            padding: 20px;
         }
 
         .spongebob-avatar {
@@ -106,9 +106,10 @@
             box-shadow: 0 0 25px rgba(234, 179, 8, 0.5);
             transition: transform 0.05s ease;
             border: 4px solid #fef08a;
+            pointer-events: none;
         }
 
-        .spongebob-avatar:active {
+        .tap-area:active .spongebob-avatar {
             transform: scale(0.92);
         }
 
@@ -116,7 +117,6 @@
             display: flex;
             gap: 15px;
             margin-bottom: 5px;
-            pointer-events: none;
         }
 
         .eye {
@@ -146,16 +146,15 @@
             background: black;
             border-radius: 50%;
         }
+
         .mouth {
             width: 60px;
             height: 25px;
             border-bottom: 4px solid #000;
             border-radius: 0 0 30px 30px;
             position: relative;
-            pointer-events: none;
         }
-
-        .teeth {
+       .teeth {
             position: absolute;
             bottom: -8px;
             left: 18px;
@@ -260,8 +259,8 @@
 
         <!-- Вкладка 1: Тапалка -->
         <div id="tab-tap" class="tab-content active">
-            <div class="tap-area">
-                <div class="spongebob-avatar" id="sponge-target">
+            <div class="tap-area" id="tap-trigger" onclick="doTap()">
+                <div class="spongebob-avatar">
                     <div class="eyes">
                         <div class="eye"><div class="pupil"><div class="pupil-inner"></div></div></div>
                         <div class="eye"><div class="pupil"><div class="pupil-inner"></div></div></div>
@@ -284,9 +283,10 @@
                 </div>
             </div>
         </div>
+
         <!-- Вкладка 2: Бусты -->
-        <div id="tab-boosts" class="tab-content" style="justify-content: flex-start;">
-            <h3 style="margin: 5px 0; font-size: 15px;">🚀 Улучшения</h3>
+        <div id="tab-boosts" class="tab-content" style="justify-content: flex-start;"> 
+<h3 style="margin: 5px 0; font-size: 15px;">🚀 Улучшения</h3>
             <div class="shop-list">
                 <div class="shop-card">
                     <div>
@@ -350,7 +350,7 @@
                 <div class="shop-card">
                     <div>1. @wampazhfy</div>
                     <div style="font-weight: bold; color: var(--accent-color);">250,000 🪙</div>
-                    </div>
+                </div>
                 <div class="shop-card">
                     <div>2. Вы</div>
                     <div style="font-weight: bold; color: var(--accent-color);"><span id="lb-coins">0</span> 🪙</div>
@@ -359,7 +359,6 @@
         </div>
 
     </div>
-
     <div class="nav-bar">
         <div class="nav-item active" onclick="switchTab('tap', this)">🧽<br>Тапалка</div>
         <div class="nav-item" onclick="switchTab('boosts', this)">🚀<br>Бусты</div>
@@ -419,17 +418,6 @@
             updateUI();
         }
 
-        const target = document.getElementById('sponge-target');
-        
-        target.addEventListener('touchstart', function(e) {
-            e.preventDefault();
-            doTap();
-        }, { passive: false });
-
-        target.addEventListener('click', function(e) {
-            doTap();
-        });
-
         setInterval(() => {
             if (energy < maxEnergy) {
                 energy = Math.min(maxEnergy, energy + 3);
@@ -459,6 +447,7 @@
                 alert("Недостаточно монет!");
             }
         }
+
         function buyEnergyLimit() {
             if (coins >= energyCost) {
                 coins -= energyCost;
@@ -475,7 +464,6 @@
         function buyMeteorsStars(stars, meteorsAmount) {
             tg.sendData(JSON.stringify({ action: "buy_stars", stars: stars, meteors: meteorsAmount }));
         }
-
         function openCase(type, cost) {
             if (meteors < cost) {
                 alert("Недостаточно метеоров!");
