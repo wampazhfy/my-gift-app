@@ -40,7 +40,7 @@
         .tap-area:active .spongebob-avatar-container { transform: scale(0.92) rotate(-2deg); }
         .spongebob-img { width: 100%; height: 100%; object-fit: cover; }
         
-        /* Анимация +1 */
+        /* Вылетающая цифра */
         .floating-num { position: fixed; font-size: 28px; font-weight: 900; color: #4ade80; pointer-events: none; z-index: 9999; text-shadow: 0 0 10px rgba(74, 222, 128, 0.8), 0 2px 4px rgba(0,0,0,0.8); animation: floatAndFade 0.7s ease-out forwards; }
         @keyframes floatAndFade { 0% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-80px) scale(1.2); } }
         
@@ -49,7 +49,6 @@
         .energy-bar-bg { width: 100%; height: 10px; background: rgba(255, 255, 255, 0.08); border-radius: 6px; overflow: hidden; }
         .energy-bar-fill { height: 100%; background: linear-gradient(90deg, #10b981 0%, #34d399 100%); width: 100%; transition: width 0.2s ease; box-shadow: 0 0 10px rgba(16, 185, 129, 0.5); }
         
-        /* Карточки */
         .shop-list { width: 100%; display: flex; flex-direction: column; gap: 10px; padding-bottom: 10px; }
         .section-title { margin: 10px 0 4px 0; font-size: 14px; font-weight: 700; color: var(--accent-yellow); text-transform: uppercase; letter-spacing: 0.8px; width: 100%; text-align: left; }
         .upgrade-card, .shop-card { background: var(--card-bg); backdrop-filter: blur(12px); border: 1px solid var(--card-border); border-radius: 16px; padding: 12px 14px; width: 100%; display: flex; justify-content: space-between; align-items: center; }
@@ -66,15 +65,376 @@
         .btn-stars { background: var(--btn-stars); color: #fff; border: none; padding: 8px 14px; border-radius: 10px; font-weight: 700; font-size: 12px; cursor: pointer; }
         .btn-disabled { opacity: 0.5; cursor: not-allowed; }
 
-        /* Профиль */
         .profile-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 18px; padding: 16px; width: 100%; display: flex; flex-direction: column; gap: 12px; margin-bottom: 12px; }
         .profile-row { display: flex; justify-content: space-between; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; }
         .profile-row:last-child { border-bottom: none; padding-bottom: 0; }
         .profile-label { color: var(--text-sub); }
         .profile-val { font-weight: 700; color: #fff; }
-        /* Модалка открытия кейса */
+
         .case-modal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(11, 19, 43, 0.95); backdrop-filter: blur(15px); z-index: 10000; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 20px; }
         .case-modal.active { display: flex; }
         .case-box-anim { font-size: 80px; animation: shake 0.5s infinite ease-in-out; }
         @keyframes shake { 0%, 100% { transform: rotate(0deg) scale(1); } 25% { transform: rotate(-10deg) scale(1.1); } 75% { transform: rotate(10deg) scale(1.1); } }
-        .reward-card { background: var(--card-bg); border: 2px solid var(--accent-yellow); border-radius: 20px; padding: 20px 40px; text-align: center; display: none; flex-direction: column; gap: 10px; box-shadow: 0
+        .reward-card { background: var(--card-bg); border: 2px solid var(--accent-yellow); border-radius: 20px; padding: 20px 40px; text-align: center; display: none; flex-direction: column; gap: 10px; box-shadow: 0 0 30px var(--accent-glow); animation: popUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes popUp { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+        .nav-bar { display: flex; justify-content: space-around; align-items: center; background: var(--card-bg); backdrop-filter: blur(16px); border: 1px solid var(--card-border); padding: 10px 0; border-radius: 20px; flex-shrink: 0; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); }
+        .nav-item { color: var(--text-sub); font-size: 10px; font-weight: 600; cursor: pointer; text-align: center; flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; transition: color 0.2s; }
+        .nav-icon { font-size: 16px; }
+        .nav-item.active { color: var(--accent-yellow); font-weight: 800; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="level-badge" id="level-name">1 Уровень: Бомж</div>
+        <div class="stats-bar">
+            <div class="level-progress-box">
+                <div class="level-progress-text"><span>Прогресс</span><span id="level-progress-num">0 / 1500</span></div>
+                <div class="level-progress-bg"><div class="level-progress-fill" id="level-progress-fill"></div></div>
+            </div>
+            <div class="counters-box">
+                <div class="stat-item">🪙 <span id="coins">0</span></div>
+                <div class="stat-item">☄️ <span id="meteors">0</span></div>
+                <div class="stat-item">⭐ <span id="stars">0</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-container">
+        <!-- ТАПАЛКА -->
+        <div id="tab-tap" class="tab-content active" style="justify-content: center;">
+            <div class="tap-area" id="tap-btn">
+                <div class="spongebob-avatar-container">
+                    <img id="level-image" class="spongebob-img" src="https://upload.wikimedia.org/wikipedia/en/3/3b/SpongeBob_SquarePants_character.svg" alt="Губка Боб">
+                </div>
+            </div>
+            <div class="energy-container">
+                <div class="energy-text"><span>⚡ Энергия</span><span><span id="energy">1500</span> / <span id="max-energy">1500</span></span></div>
+                <div class="energy-bar-bg"><div class="energy-bar-fill" id="energy-fill"></div></div>
+            </div>
+        </div>
+
+        <!-- УЛУЧШЕНИЯ -->
+        <div id="tab-boosts" class="tab-content">
+            <div class="section-title">⚡ Улучшения</div>
+            <div class="shop-list">
+                <div class="upgrade-card">
+                    <div class="upgrade-header">
+                        <div><div class="upgrade-title">Сила нажатия</div><div class="upgrade-desc">Больше монет за каждый тап</div></div>
+                        <div class="level-tag">Ур. <span id="lvl-tap">1</span></div>
+                    </div>
+                    <div class="upgrade-footer">
+                        <div class="price-text">🪙 <span id="cost-tap">50</span></div>
+                        <button class="btn-upgrade" id="buy-tap-btn">Улучшить</button>
+                    </div>
+                </div>
+                <div class="upgrade-card">
+                    <div class="upgrade-header">
+                        <div><div class="upgrade-title">Запас энергии</div><div class="upgrade-desc">+500 к макс. энергии</div></div>
+                 <div class="level-tag">Ур. <span id="lvl-energy">1</span></div>
+                    </div>
+                    <div class="upgrade-footer">
+                        <div class="price-text">🪙 <span id="cost-energy">100</span></div>
+                        <button class="btn-upgrade" id="buy-energy-btn">Улучшить</button>
+                    </div>
+                </div>
+                <div class="upgrade-card">
+                    <div class="upgrade-header">
+                        <div><div class="upgrade-title">Скорость регена</div><div class="upgrade-desc">+1/сек к восстановлению</div></div>
+                        <div class="level-tag">Ур. <span id="lvl-regen">1</span></div>
+                    </div>
+                    <div class="upgrade-footer">
+                        <div class="price-text">🪙 <span id="cost-regen">150</span></div>
+                        <button class="btn-upgrade" id="buy-regen-btn">Улучшить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- КЕЙСЫ И ДОНАТ -->
+        <div id="tab-cases" class="tab-content">
+            <div class="section-title">🎁 Ежедневный Кейс</div>
+            <div class="shop-list">
+                <div class="shop-card">
+                    <div><div style="font-weight:700;">Бесплатный подарок</div><div style="font-size:11px; color:var(--text-sub);" id="daily-timer-text">Доступен раз в 24 часа</div></div>
+                    <button class="btn-upgrade" id="daily-case-btn" onclick="openDailyCase()">Забрать</button>
+                </div>
+            </div>
+
+            <div class="section-title">☄️ Купить Метеоры за Stars</div>
+            <div class="shop-list">
+                <div class="shop-card">
+                    <div><div style="font-weight:700;">Пак 100 ☄️</div><div style="font-size:11px; color:var(--text-sub);">За Telegram Stars</div></div>
+                    <button class="btn-stars" onclick="buyMeteors(100, 10)">10 ⭐</button>
+                </div>
+                <div class="shop-card">
+                    <div><div style="font-weight:700;">Пак 500 ☄️</div><div style="font-size:11px; color:var(--text-sub);">Выгодно!</div></div>
+                    <button class="btn-stars" onclick="buyMeteors(500, 45)">45 ⭐</button>
+                </div>
+            </div>
+
+            <div class="section-title">📦 Магазин Кейсов</div>
+            <div class="shop-list">
+                <div class="shop-card">
+                    <div><div style="font-weight:700;">Бюджетный кейс</div><div style="font-size:11px; color:var(--text-sub);">25 ☄️</div></div>
+                    <button class="btn-blue" onclick="openCase('meteor', 25)">Открыть</button>
+                </div>
+                <div class="shop-card">
+                    <div><div style="font-weight:700;">Элитный кейс</div><div style="font-size:11px; color:var(--text-sub);">100 ☄️</div></div>
+                    <button class="btn-blue" onclick="openCase('meteor', 100)">Открыть</button>
+                </div>
+                <div class="shop-card">
+                    <div><div style="font-weight:700;">Звёздный кейс</div><div style="font-size:11px; color:var(--text-sub);">15 ⭐</div></div>
+                    <button class="btn-stars" onclick="openCase('star', 15)">Открыть</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ПРОФИЛЬ -->
+        <div id="tab-profile" class="tab-content">
+            <div class="section-title">👤 Мой Профиль</div>
+            <div class="profile-box">
+                <div class="profile-row"><span class="profile-label">Игрок:</span><span class="profile-val" id="prof-name">Игрок</span></div>
+                <div class="profile-row"><span class="profile-label">Уровень:</span><span class="profile-val" id="prof-level">1 Уровень</span></div>
+                <div class="profile-row"><span class="profile-label">Всего добыто монет:</span><span class="profile-val" id="prof-total">0 🪙</span></div>
+                <div class="profile-row"><span class="profile-label">Сила тапа:</span><span class="profile-val" id="prof-tap">1</span></div>
+            </div>
+        </div>
+
+        <!-- ТОП -->
+        <div id="tab-leaderboard" class="tab-content">
+            <div class="section-title">🏆 Лидерборд</div>
+            <div class="shop-list">
+                <div class="shop-card"><div>1. @wampazhfy</div><div style="font-weight:800; color:var(--accent-yellow);">250,000 🪙</div></div>
+                <div class="shop-card"><div>2. Вы</div><div style="font-weight:800; color:var(--accent-yellow);"><span id="lb-coins">0</span> 🪙</div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- АНИМАЦИЯ КЕЙСА -->
+    <div class="case-modal" id="case-modal">
+        <div class="case-box-anim" id="case-box-icon">🎁</div>
+        <div style="font-size: 18px; font-weight: 700; color: var(--accent-yellow);" id="case-status-text">Открываем...</div>
+        <div class="reward-card" id="reward-card">
+            <div style="font-size: 14px; color: var(--text-sub);">Ваш выигрыш:</div>
+            <div style="font-size: 26px; font-weight: 800; color: var(--accent-yellow);" id="reward-amount">+0 🪙</div>
+            <button class="btn-upgrade" onclick="closeCaseModal()" style="margin-top: 10px;">Забрать</button>
+        </div>
+    </div>
+
+    <!-- НИЖНЕЕ МЕНЮ -->
+    <div class="nav-bar">
+        <div class="nav-item active" onclick="switchTab('tap', this)"><span class="nav-icon">🧽</span><span>Тапалка</span></div>
+        <div class="nav-item" onclick="switchTab('boosts', this)"><span class="nav-icon">⚡</span><span>Улучшения</span></div>
+        <div class="nav-item" onclick="switchTab('cases', this)"><span class="nav-icon">📦</span><span>Кейсы</span></div>
+        <div class="nav-item" onclick="switchTab('profile', this)"><span class="nav-icon">👤</span><span>Профиль</span></div>
+        <div class="nav-item" onclick="switchTab('leaderboard', this)"><span class="nav-icon">🏆</span><span>Топ</span></div>
+    </div>
+
+    <script>
+        var tg = window.Telegram ? window.Telegram.WebApp : null;
+        if (tg) {
+            try { tg.ready(); tg.expand(); } catch(e) {}
+        }
+
+        var coins = 0, totalCoins = 0, meteors = 0, stars = 0, energy = 1500;
+        var lvlTap = 1, tapPower = 1, costTap = 50;
+        var lvlEnergy = 1, maxEnergy = 1500, costEnergy = 100;
+        var lvlRegen = 1, regenRate = 3, costRegen = 150;
+        var lastDailyTime = 0;
+
+        var levels = [
+            { limit: 0, name: "1 Уровень: Бомж", img: "https://upload.wikimedia.org/wikipedia/en/3/3b/SpongeBob_SquarePants_character.svg", nextLimit: 1500 },
+            { limit: 1500, name: "2 Уровень: Продвинутый", img: "https://upload.wikimedia.org/wikipedia/en/3/3b/SpongeBob_SquarePants_character.svg", nextLimit: 5000 },
+            { limit: 5000, name: "3 Уровень: Гражданский", img: "https://upload.wikimedia.org/wikipedia/en/3/3b/SpongeBob_SquarePants_character.svg", nextLimit: 10000 },
+            { limit: 10000, name: "4 Уровень: Темщик", img: "https://upload.wikimedia.org/wikipedia/en/3/3b/SpongeBob_SquarePants_character.svg", nextLimit: 25000 },
+            { limit: 25000, name: "5 Уровень: Арбитражник", img: "https://upload.wikimedia.org/wikipedia/en/3/3b/SpongeBob_SquarePants_character.svg", nextLimit: 40000 },
+            { limit: 40000, name: "6 Уровень: НФТ Холдер", img: "https://upload.wikimedia.org/wikipedia/en/3/3b/SpongeBob_SquarePants_character.svg", nextLimit: 80000 },
+            { limit: 80000, name: "7 Уровень: Медийка", img: "https://upload.wikimedia.org/wikipedia/en/3/3b/SpongeBob_SquarePants_character.svg", nextLimit: 110000 },
+            { limit: 110000, name: "8 Уровень: Миллионер", img: "https://upload.wikimedia.org/wikipedia/en/3/3b/SpongeBob_SquarePants_character.svg", nextLimit: 160000 },
+            { limit: 160000, name: "9 Уровень: Мультимиллионер", img: "https://upload.wikimedia.org/wikipedia/en/3/3b/SpongeBob_SquarePants_character.svg", nextLimit: 200000 },
+            { limit: 200000, name: "10 Уровень: Миллиардер", img: "https://upload.wikimedia.org/wikipedia/en/3/3b/SpongeBob_SquarePants_character.svg", nextLimit: 200000 }
+        ];
+
+        function updateUI() {
+            document.getElementById('coins').innerText = Math.floor(coins);
+            document.getElementById('meteors').innerText = meteors;
+            document.getElementById('stars').innerText = stars;
+            document.getElementById('energy').innerText = Math.floor(energy);
+            document.getElementById('max-energy').innerText = maxEnergy;
+            document.getElementById('energy-fill').style.width = Math.min(100, Math.max(0, (energy / maxEnergy) * 100)) + '%';
+            document.getElementById('lb-coins').innerText = Math.floor(coins);
+
+            document.getElementById('lvl-tap').innerText = lvlTap;
+            document.getElementById('cost-tap').innerText = costTap;
+            document.getElementById('lvl-energy').innerText = lvlEnergy;
+            document.getElementById('cost-energy').innerText = costEnergy;
+            document.getElementById('lvl-regen').innerText = lvlRegen;
+            document.getElementById('cost-regen').innerText = costRegen;
+
+            var currentLevel = levels[0];
+            for (var i = 0; i < levels.length; i++) {
+                if (totalCoins >= levels[i].limit) currentLevel = levels[i];
+            }
+            document.getElementById('level-name').innerText = currentLevel.name;
+            document.getElementById('level-image').src = currentLevel.img;
+
+            if (currentLevel.nextLimit > currentLevel.limit) {
+                var progressCurrent = totalCoins - currentLevel.limit;
+                var progressTarget = currentLevel.nextLimit - currentLevel.limit;
+                var percent = Math.min(100, Math.max(0, (progressCurrent / progressTarget) * 100));
+                document.getElementById('level-progress-fill').style.width = percent + '%';
+                document.getElementById('level-progress-num').innerText = totalCoins + ' / ' + currentLevel.nextLimit;
+            } else {
+                document.getElementById('level-progress-fill').style.width = '100%';
+                document.getElementById('level-progress-num').innerText = 'MAX';
+            }
+
+            if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                document.getElementById('prof-name').innerText = tg.initDataUnsafe.user.first_name || "Игрок";
+            }
+            document.getElementById('prof-level').innerText = currentLevel.name;
+            document.getElementById('prof-total').innerText = Math.floor(totalCoins) + " 🪙";
+            document.getElementById('prof-tap').innerText = tapPower;
+
+            var now = Date.now();
+            var dailyBtn = document.getElementById('daily-case-btn');
+            var timerText = document.getElementById('daily-timer-text');
+            if (now - lastDailyTime >= 86400000) {
+                dailyBtn.disabled = false;
+                dailyBtn.classList.remove('btn-disabled');
+                timerText.innerText = "Готов к открытию!";
+            } else {
+                dailyBtn.disabled = true;
+                dailyBtn.classList.add('btn-disabled');
+                var leftMs = 86400000 - (now - lastDailyTime);
+                var hours = Math.floor(leftMs / (1000 * 60 * 60));
+                var mins = Math.floor((leftMs % (1000 * 60 * 60)) / (1000 * 60));
+                timerText.innerText = "Осталось: " + hours + "ч " + mins + "м";
+            }
+        }
+        var tapBtn = document.getElementById('tap-btn');
+        tapBtn.addEventListener('click', function(e) {
+            if (energy < tapPower) return;
+            
+            coins += tapPower;
+            totalCoins += tapPower;
+            energy -= tapPower;
+
+            var num = document.createElement('div');
+            num.className = 'floating-num';
+            num.innerText = '+' + tapPower;
+            
+            var x = e.clientX  (e.touches && e.touches[0].clientX)  (window.innerWidth / 2);
+            var y = e.clientY  (e.touches && e.touches[0].clientY)  (window.innerHeight / 2);
+            
+            num.style.left = (x - 15) + 'px';
+            num.style.top = (y - 30) + 'px';
+            document.body.appendChild(num);
+            setTimeout(function() { num.remove(); }, 700);
+
+            updateUI();
+        });
+
+        document.getElementById('buy-tap-btn').addEventListener('click', function() {
+            if (coins >= costTap) { coins -= costTap; lvlTap += 1; tapPower += 1; costTap = Math.floor(costTap * 1.8); updateUI(); }
+            else { alert("Недостаточно монет!"); }
+        });
+
+        document.getElementById('buy-energy-btn').addEventListener('click', function() {
+            if (coins >= costEnergy) { coins -= costEnergy; lvlEnergy += 1; maxEnergy += 500; energy += 500; costEnergy = Math.floor(costEnergy * 1.7); updateUI(); }
+            else { alert("Недостаточно монет!"); }
+        });
+
+        document.getElementById('buy-regen-btn').addEventListener('click', function() {
+            if (coins >= costRegen) { coins -= costRegen; lvlRegen += 1; regenRate += 1; costRegen = Math.floor(costRegen * 2.0); updateUI(); }
+            else { alert("Недостаточно монет!"); }
+        });
+
+        setInterval(function() {
+            if (energy < maxEnergy) {
+                energy = Math.min(maxEnergy, energy + regenRate);
+            }
+            updateUI();
+        }, 1000);
+
+        function buyMeteors(amount, costStars) {
+            if (stars < costStars) { alert("Недостаточно Telegram Stars ⭐!"); return; }
+            stars -= costStars;
+            meteors += amount;
+            alert("Успешно куплено " + amount + " ☄️!");
+            updateUI();
+        }
+
+        function openDailyCase() {
+            var now = Date.now();
+            if (now - lastDailyTime < 86400000) return;
+            lastDailyTime = now;
+            
+            startCaseAnimation(function() {
+                var winCoins = Math.floor(Math.random() * 1000) + 200;
+                coins += winCoins;
+                totalCoins += winCoins;
+                return winCoins;
+            });
+        }
+
+        function openCase(type, cost) {
+            if (type === 'meteor') {
+                if (meteors < cost) { alert("Недостаточно метеоров!"); return; }
+                meteors -= cost;
+            } else if (type === 'star') {
+                if (stars < cost) { alert("Недостаточно Telegram Stars ⭐!"); return; }
+                stars -= cost;
+            }
+            updateUI();
+
+            startCaseAnimation(function() {
+                var winCoins = Math.floor(Math.random() * 800) + 100;
+                coins += winCoins;
+                totalCoins += winCoins;
+                return winCoins;
+            });
+        }
+
+        function startCaseAnimation(rewardCalc) {
+            var modal = document.getElementById('case-modal');
+            var boxIcon = document.getElementById('case-box-icon');
+            var statusText = document.getElementById('case-status-text');
+            var rewardCard = document.getElementById('reward-card');
+            
+            boxIcon.style.display = 'block';
+            statusText.style.display = 'block';
+            rewardCard.style.display = 'none';
+            modal.classList.add('active');
+           setTimeout(function() {
+                boxIcon.style.display = 'none';
+                statusText.style.display = 'none';
+                
+                var winAmount = rewardCalc();
+                document.getElementById('reward-amount').innerText = '+' + winAmount + ' 🪙';
+                rewardCard.style.display = 'flex';
+                updateUI();
+            }, 1800);
+        }
+
+        function closeCaseModal() {
+            document.getElementById('case-modal').classList.remove('active');
+        }
+
+        function switchTab(tabId, el) {
+            var tabs = document.querySelectorAll('.tab-content');
+            for (var i = 0; i < tabs.length; i++) { tabs[i].classList.remove('active'); }
+            var navs = document.querySelectorAll('.nav-item');
+            for (var j = 0; j < navs.length; j++) { navs[j].classList.remove('active'); }
+            
+            var directTab = document.getElementById('tab-' + tabId);
+            if (directTab) { directTab.classList.add('active'); }
+            if (el) { el.classList.add('active'); }
+        }
+
+        updateUI();
+    </script>
+</body>
+</html>
