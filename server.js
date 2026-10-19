@@ -8,7 +8,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 const BOT_TOKEN = process.env.BOT_TOKEN || '8887071802:AAH7Gar-Zk9FETSTYh9RNkBoA7_fdT_tzko';
-const TELEGRAM_API = https://api.telegram.org/bot${BOT_TOKEN};
+const TELEGRAM_API = `https://api.telegram.org/bot${BOT_TOKEN}`;
 const ADMIN_ID = String(process.env.ADMIN_TELEGRAM_ID || '7275857070');
 
 const users = {}; 
