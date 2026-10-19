@@ -1,13 +1,13 @@
 {
-  "name": "telegram-gift-cases",
+  "name": "my-gift-app",
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
-    "axios": "^1.6.0",
-    "dotenv": "^16.3.1",
-    "express": "^4.18.2"
+    "axios": "^1.6.8",
+    "express": "^4.19.2",
+    "dotenv": "^16.4.5"
   }
 }
