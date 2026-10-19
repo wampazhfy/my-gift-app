@@ -19,7 +19,7 @@ app.post('/api/create-invoice', async (req, res) => {
 
     try {
         const response = await fetch(https://api.telegram.org/bot${BOT_TOKEN}/createInvoiceLink,                                    
-                                     {
+                                     
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
